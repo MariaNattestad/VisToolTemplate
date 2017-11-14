@@ -1,0 +1,210 @@
+<!doctype html>
+<head>
+	<title>VisToolTemplate: My visualization app that does something amazing</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<style>
+		body { 
+			margin: 0;
+			font-family: Arial;
+		}
+		h2 {
+			padding: 2vmin 2vmin 2vmin 2vmin;
+		}
+		.panel-body {
+			overflow-x: scroll;
+		}
+		#examples a {
+			display: block;
+		}
+		#wrapper {
+			display: flex;
+		}
+		#left {
+			padding: 10px;
+			width: 100px;
+		}
+		#right {
+			padding: 10px;
+			width: 500px;
+		}
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.3.6/papaparse.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+	<script src="js/InputPanel.js"></script>
+</head>
+<body>
+
+<h2>VisToolTemplate: My visualization app that does something amazing</h2>
+
+<div id="wrapper">
+	<div id="left">
+		<div class="panel panel-default">
+			<div class="panel-heading">Examples</div>
+			<div id="examples" class="panel-body"></div>
+		</div>
+		<div class="panel panel-default">
+		<div class="panel-heading">Getting started</div>
+			<div class="panel-body">
+				<ol>
+					<li>Add some instructions here for your users to get started</li>
+					<li>Maybe show them what an example file looks like: <a href="test_files/test.csv" target="_blank">test.csv</a></li>
+				</ol>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">Custom inputs</div>
+			<div id="inputPanel" class="panel-body"></div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">Information</div>
+			<div class="panel-body">
+				VisToolTemplate is open source at <a href="https://github.com/marianattestad/VisToolTemplate">https://github.com/marianattestad/VisToolTemplate</a>
+			</div>
+		</div>
+	</div>
+	<div id="right">
+		<svg id="vis"></svg>
+	</div>
+	
+</div>
+
+<script type='text/javascript'>
+
+// Define some examples
+
+var baseURL = location.protocol + '//' + location.host + location.pathname;
+
+var examples = [
+	{
+		shortName: "S. cerevisiae",
+		name: "Saccharomyces cerevisiae MHAP assembly", 
+		url: baseURL + "?input=test_files/Saccharomyces_cerevisiae_MHAP_assembly.oriented_coords.csv"
+	},
+	{
+		shortName: "A. thaliana",
+		name: "Arabidopsis thaliana MHAP assembly", 
+		url: baseURL + "?input=test_files/Arabidopsis_thaliana_MHAP_assembly.oriented_coords.csv"
+	},
+];
+
+d3.select("#examples").selectAll("a").data(examples).enter().append("a")
+	.attr("href", function(d) {return d.url})
+	.html(function(d) {return d.shortName})
+	.property("title", function(d) {return d.name});
+
+// Set up a system for reading and parsing data
+
+function readInputData(source, inputType) {
+	if (inputType === "url") {
+		Papa.parse(source, {
+			download: true,
+			header: true, 
+			dynamicTyping: true,
+			skipEmptyLines: true,
+			complete: function(parsed) {
+				setInputData(parsed.data);
+			}
+		});
+	} else if (inputType === "File") {
+		if (source.size > 10000000) {
+			console.warn("Warning","Loading large file may take a while.");
+		}
+		Papa.parse(source, {
+			header: true, 
+			dynamicTyping: true,
+			skipEmptyLines: true,
+			complete: function(parsed) {
+				setInputData(parsed.data);
+			}
+		});
+	}
+}
+
+var inputSpec = {
+	input: {name: "input", required: true, callback: readInputData},
+};
+
+var _input_area = d3.select("#inputPanel");
+
+var _input_panel = new InputPanel({
+	element: _input_area,
+	spec: inputSpec,
+});
+
+
+// Adjust plotting area and left side panel based on window size
+
+var w = window,
+	d = document,
+	e = d.documentElement,
+	g = d.getElementsByTagName('body')[0];
+
+
+
+var layout = {	screenWidth: (w.innerWidth || e.clientWidth || g.clientWidth)*0.90,
+				height: (w.innerHeight || e.clientHeight || g.clientHeight)*0.80
+};
+
+// Panel is at most 30% of the screen or 300px, whichever is smaller
+layout.panelWidth = Math.min(layout.screenWidth*0.3, 300);
+layout.width = layout.screenWidth - layout.panelWidth;
+
+d3.select("#left").style("width", layout.panelWidth + "px");
+d3.select("#right").style("width", layout.width + "px")
+
+
+
+function setupDrawing() {
+	// Draw the things here that you want no matter what, even when no data has loaded
+	// For example:
+
+	var svg = d3.select('svg#vis')
+		.attr("width", layout.width)
+		.attr("height", layout.height)
+
+
+	// background:
+	svg.append("rect")
+		.attr("width",layout.width)
+		.attr("height",layout.height)
+		.attr("fill","purple");
+
+	// Giant circle
+	var radius = d3.min([layout.height, layout.width])/2;
+
+	svg.append("circle")
+		.attr("cy",layout.height/2)
+		.attr("cx",layout.width/2)
+		.attr("r",radius)
+		.attr("fill","blue");
+
+}
+
+setupDrawing();
+
+function setInputData(data) {
+	console.log(data);
+
+	// This is where you can do all your visualization magic with the data you just loaded
+
+	
+		
+	
+
+
+
+
+}
+
+
+
+
+
+
+	</script>
+</body>
+
+
