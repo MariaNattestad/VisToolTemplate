@@ -131,11 +131,11 @@ var currentPage = "#first";
 
 function changePage(page) {
 	d3.selectAll(".page").style("display","none");
-	d3.selectAll(".page_tab").attr("class", "");
+	d3.selectAll(".page_tab").classed("active", false);
 
 	currentPage = page;
 	d3.select(currentPage).style("display", "block");
-	d3.select(currentPage+"_tag").attr("class", "active");
+	d3.select(currentPage+"_tab").classed("active", true);
 }
 
 
@@ -174,13 +174,15 @@ var examples = [
 		name: "Statistics about the chromosomes of Homo Sapiens", 
 		url: baseURL + "?input1=https://dl.dnanex.us/F/D/X6BGgkkBp2885G1Kgv3xBf3jB7JfvgXbzB7b1gX2/human_chromosome_stats.csv"
 	},
-
 ];
 
 d3.select("#examples").selectAll("a").data(examples).enter().append("a")
 	.attr("href", function(d) {return d.url})
 	.html(function(d) {return d.shortName})
 	.property("title", function(d) {return d.name});
+
+
+
 
 // Set up a system for reading and parsing data
 function readInputData(source, inputType, variable) {
@@ -270,9 +272,13 @@ function setInputData(data, variable) {
 	// You can set some rules here to launch the visualization as soon as the required inputs are available
 	// If you have optional inputs, you can instead call launchVisualization() in the onclick event of a button that the user clicks when they are satisfied with all their inputs
 
+
 	if (loadedData["input1"] !== undefined) {
 		launchVisualization();
 	}
+
+	// Example of requiring two inputs:
+	// if (loadedData["input1"] !== undefined && loadedData["input2"] !== undefined) {
 }
 
 
@@ -296,7 +302,7 @@ function launchVisualization() {
 	svg.append("rect")
 		.attr("width",layout.svg.width)
 		.attr("height",layout.svg.height)
-		.attr("fill","#ccd3ff");
+		.attr("fill","#fff4d6");
 
 
 	var width = layout.inner.width;
@@ -321,9 +327,9 @@ function launchVisualization() {
 
 
 	// Abstract out the specific column names to make them easier to modify
-	var xVariable = "Protein-coding genes";
+	var xVariable = "Base pairs";
 	var yVariable = "Length (mm)";
-	var sizeVariable = "Base pairs";
+	var sizeVariable = "Protein-coding genes";
 	var textVariable = "Chromosome";
 
 
