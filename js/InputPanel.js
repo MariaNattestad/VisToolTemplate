@@ -22,13 +22,18 @@ var InputPanel = function(opts) {
 		.enter().append("div")
 			.attr("class","InputPanelItem form-group");
 
-	if (!singleInput) {
-		_this.inputs.append("h4").html(function(d) {return d.name});
-	}
+	_this.inputs.append("h4").html(function(d) {
+		if (d.required) {
+			return "<span class='req' title='Required input'>* </span>" + d.name;
+		} else {
+			return d.name;
+		}
+	});
+
 	
 	_this.inputs.append("label")
 		.property("for", function(d){return d.id + "_" + "url"})
-		.html("From a URL:");
+		.html("Enter a URL:");
 
 	_this.inputs.append("input")
 		.property("type","text")
@@ -38,13 +43,15 @@ var InputPanel = function(opts) {
 	
 	_this.inputs.append("label")
 		.property("for", function(d){return d.id + "_" + "file"})
-		.html("From a local file:");
+		.html("or pick a local file:");
 
 	_this.inputs.append("input")
 		.property("type","file")
-		.attr("class","form-control")
+		.attr("class","form-control-file")
 		.attr("id", function(d){return d.id + "_" + "file"})
 		.on("change", setLocalFile(_this));
+
+	_this.inputs.append("hr");
 
 	_this.readUrlParameters();
 };
@@ -88,9 +95,6 @@ InputPanel.prototype.readUrlParameters = function() {
 			console.warn("Unrecognized URL parameter:", key);
 		}
 	}
-
-	// this.updateUI();
-
 };
 
 InputPanel.prototype.set = function(variable, inputType, value) {

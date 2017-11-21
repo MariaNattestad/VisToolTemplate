@@ -3,411 +3,126 @@
 	<title>VisToolTemplate: My visualization app that does something amazing</title>
 	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-	<style>
-		body { 
-			margin: 0;
-			font-family: Arial;
-		}
-		h1, h2 {
-			text-align: center;
-		}
-		.center {
-			width: 50%;
-			margin: 0 auto;
-		}
-		.panel-body {
-			overflow-x: scroll;
-		}
-		#examples a {
-			display: block;
-			text-align: center;
-			font-size 
-		}
-		.page {
-			display: none;
-		}
-		#first {
-			display: block;
-		}
-		.InputPanelItem label {
-			display: inline-block;
-		}
-		#main_tab {
-			display: none;
-		}
-	</style>
+	<link rel="stylesheet" href="css/VisToolTemplate.css" />
+</head>
+<body>
+
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="javascript:void(0)" onclick="changePage('#first');">VisToolTemplate</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li class="page_tab" id="main_tab"><a href="javascript:void(0)" onclick="changePage('#main');">Visualization</a></li>
+	      <li class="page_tab" id="tutorial_tab"><a href="javascript:void(0)" onclick="changePage('#tutorial');">Tutorial</a></li>
+	      <li class="page_tab" id="about_tab"><a href="javascript:void(0)" onclick="changePage('#about');">About</a></li>
+	    </ul>
+	  </div>
+	</nav>
+
+
+	<div id="messagesContainer"></div>
+
+	<div class="page" id="first">
+
+		<div class="center">
+
+			<h1>Add some data</h1>
+			<!-- Special InputPanel class defined in the javascript code will fill out this div: -->
+			<div id="inputPanel"></div>
+
+
+			<h2>Or try an example:</h2>
+			<!-- Examples defined in the javascript code will fill out this div: -->
+			<div id="examples"></div>
+		</div>
+
+	</div>
+
+	<div class="page" id="tutorial">
+		<h2>Tutorial</h2>
+
+		<!-- Example tutorial page -->
+		<div class="panel panel-default">
+		<div class="panel-heading">Getting started</div>
+			<div class="panel-body">
+				<ol>
+					<li>Add some instructions here for your users to get started</li>
+					<li>Maybe show them what an example file looks like: <a href="test_files/human_chromosome_stats.csv">human_chromosome_stats.csv</a></li>
+				</ol>
+			</div>
+		</div>
+	</div>
+
+	<div class="page" id="about">
+		<h2>About</h2>
+
+		<!-- Example about page -->
+		<div class="panel panel-default">
+			<div class="panel-heading">Information</div>
+			<div class="panel-body">
+				VisToolTemplate is open source at <a href="https://github.com/marianattestad/VisToolTemplate">https://github.com/marianattestad/VisToolTemplate</a>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Want to add more pages? Just use the tutorial and about pages as templates. You will need another page_tab in the navigation bar and another page here -->
+
+
+	<div class="page" id="main">
+		<svg id="vis"></svg>
+	</div>
+
+
+	<!-- JavaScript files -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
 	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.3.6/papaparse.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
-	<script src="js/InputPanel.js"></script>
-
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-</head>
-<body>
+	<!-- Takes care of requesting the right inputs from the user -->
+	<script src="js/InputPanel.js"></script>
 
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="javascript:void(0)" onclick="changePage('#first');">VisToolTemplate</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li class="page_tab" id="main_tab"><a href="javascript:void(0)" onclick="changePage('#main');">Visualization</a></li>
-      <li class="page_tab" id="tutorial_tab"><a href="javascript:void(0)" onclick="changePage('#tutorial');">Tutorial</a></li>
-      <li class="page_tab" id="about_tab"><a href="javascript:void(0)" onclick="changePage('#about');">About</a></li>
-    </ul>
-  </div>
-</nav>
+	<!-- app.js holds your visualization. Edit app.js to change the visualization -->
+	<script src="app.js"></script> 
 
+	<!-- VisToolTemplate.js sets up the looks and basic functionality of the site. Edit VisToolTemplate.js to control what inputs your app should take from the user or how it should parse the data -->
+	<script src="js/VisToolTemplate.js"></script>
 
-<div id="messagesContainer"></div>
+	<script type="text/javascript">
 
-<div class="page" id="first">
+		// Define the inputs needed for this app
+		var inputSpec = {
+			input: {name: "Chromosome statistics", required: true, callback: readTSVorCSV},
+			someOtherInput: {name: "Second input", required: false, callback: readTSVorCSV}, // try uncommenting this and see another input has been added
+		};
+		// the keys input and someOtherInput become the names for those parameters you can pass in through the URL (see examples' urlSuffix), and how you refer to each file within the visualization code in app.js
 
-	<div class="center">
+		// Note: readTSVorCSV is a function defined in VisToolTemplate.js, which will be called when a file is chosen. readTSVorCSV will parse the data, read it into memory, and call other functions that launch the visualization in app.js
 
-		<h1>Add some data</h1>
-		<!-- Special InputPanel class defined in the javascript code will fill out this div: -->
-		<div id="inputPanel"></div>
-
-		<hr>
-
-		<h2>Or try an example:</h2>
-		<!-- Examples defined in the javascript code will fill out this div: -->
-		<div id="examples"></div>
-	</div>
-
-</div>
-
-<div class="page" id="tutorial">
-	<h2>Tutorial</h2>
-
-
-	<!-- Example tutorial page -->
-	<div class="panel panel-default">
-	<div class="panel-heading">Getting started</div>
-		<div class="panel-body">
-			<ol>
-				<li>Add some instructions here for your users to get started</li>
-				<li>Maybe show them what an example file looks like: <a href="test_files/human_chromosome_stats.csv">human_chromosome_stats.csv</a></li>
-			</ol>
-		</div>
-	</div>
-
-</div>
-
-<div class="page" id="about">
-	<h2>About</h2>
-
-
-	<!-- Example about page -->
-	<div class="panel panel-default">
-		<div class="panel-heading">Information</div>
-		<div class="panel-body">
-			VisToolTemplate is open source at <a href="https://github.com/marianattestad/VisToolTemplate">https://github.com/marianattestad/VisToolTemplate</a>
-		</div>
-	</div>
-
-</div>
-
-<!-- Want to add more pages? Just use the tutorial and about pages as templates. You will need another page_tab in the navigation bar and another page here -->
+		setInputSpec(inputSpec);
 
 
 
-<div class="page" id="main">
-	<svg id="vis"></svg>
-</div>
-
-
-<script type='text/javascript'>
-
-
-// System for navigation bar links
-// Don't modify this part, just add to the HTML above by following the same pattern as the tutorial and about pages
-
-var currentPage = "#first";
-
-function changePage(page) {
-	d3.selectAll(".page").style("display","none");
-	d3.selectAll(".page_tab").classed("active", false);
-
-	currentPage = page;
-	d3.select(currentPage).style("display", "block");
-	d3.select(currentPage+"_tab").classed("active", true);
-}
-
-
-// System for communicating messages to the user
-function showMessage(message, sentiment) {
-	
-	if (message !== undefined) {
-		var look = R.contains(sentiment, ["success","warning","danger","info"]) ? sentiment : "info";
-
-		var alert = d3.select("#messagesContainer")
-			.append("div")
-				.attr("class","alert alert-" + look +" alert-dismissable")
-				.attr("role","alert");
-		alert.append("a")
-			.attr("href","#")
-			.attr("class","close")
-			.attr("data-dismiss","alert")
-			.attr("aria-label","close")
-			.html("&times;");
-		alert.append("p")
-			.html(message);
-	} else {
-		// use empty message as a sign to clear all alerts
-		d3.select("#messagesContainer").html("");
-	}
-}
-
-
-
-// Define some examples
-var baseURL = location.protocol + '//' + location.host + location.pathname;
-
-var examples = [
-	{
-		shortName: "Human chromosome statistics",
-		name: "Statistics about the chromosomes of Homo Sapiens", 
-		url: baseURL + "?input1=https://dl.dnanex.us/F/D/X6BGgkkBp2885G1Kgv3xBf3jB7JfvgXbzB7b1gX2/human_chromosome_stats.csv"
-	},
-];
-
-d3.select("#examples").selectAll("a").data(examples).enter().append("a")
-	.attr("href", function(d) {return d.url})
-	.html(function(d) {return d.shortName})
-	.property("title", function(d) {return d.name});
-
-
-
-
-// Set up a system for reading and parsing data
-function readInputData(source, inputType, variable) {
-	if (inputType === "url") {
-		Papa.parse(source, {
-			download: true,
-			header: true,
-			dynamicTyping: true,
-			skipEmptyLines: true,
-			complete: function(parsed) {
-				setInputData(parsed.data, variable);
+		// Define some examples
+		var examples = [
+			{
+				name: "Human chromosome statistics",
+				hover: "Statistics about the chromosomes of Homo Sapiens", 
+				urlSuffix: "?input=https://dl.dnanex.us/F/D/X6BGgkkBp2885G1Kgv3xBf3jB7JfvgXbzB7b1gX2/human_chromosome_stats.csv"
 			},
-			before: function() {
-				console.log("Loading file from URL");
-			},
-			error: function(err) {
-				showMessage("Failed to load file from URL. Make sure this URL is correct and publicly accessible, and check the console for specific errors.", "danger");
-			}
-		});
-	} else if (inputType === "File") {
-		if (source.size > 10000000) {
-			console.warn("Warning","Loading large file may take a while.");
-		}
-		Papa.parse(source, {
-			header: true,
-			dynamicTyping: true,
-			skipEmptyLines: true,
-			complete: function(parsed) {
-				setInputData(parsed.data, variable);
-			}
-		});
-	}
-}
+		];
 
-// Specify which inputs are needed
-var inputSpec = {
-	input1: {name: "First input", callback: readInputData},
-	// input2: {name: "Second input", callback: readInputData}, // try uncommenting this and see another input has been added
-};
-// Set up the input panel to automatically create a UI for the user to load those inputs
-var _input_area = d3.select("#inputPanel");
-
-var _input_panel = new InputPanel({
-	element: _input_area,
-	spec: inputSpec,
-});
-
-
-// Measure the width and height of the screen
-
-var w = window,
-	d = document,
-	e = d.documentElement,
-	g = d.getElementsByTagName('body')[0];
-
-
-var layout = {
-	svg: {
-		width: (w.innerWidth || e.clientWidth || g.clientWidth)*0.90,
-		height: (w.innerHeight || e.clientHeight || g.clientHeight)*0.80
-	},
-	margin: {
-		top: 100,
-		left: 80,
-		right: 100,
-		bottom: 80
-	}
-};
-
-layout.inner = {
-	width: layout.svg.width - layout.margin.left - layout.margin.right,
-	height: layout.svg.height - layout.margin.top - layout.margin.bottom
-};
-
-
-var loadedData = {};
-
-
-function setInputData(data, variable) {
-	
-	// If you need input validation to make sure the data has the right format, do it here before setting loadedData
-	// You can also apply any transformations to the data before setting loadedData
-
-	loadedData[variable] = data;
-
-
-	// You can set some rules here to launch the visualization as soon as the required inputs are available
-	// If you have optional inputs, you can instead call launchVisualization() in the onclick event of a button that the user clicks when they are satisfied with all their inputs
-
-
-	if (loadedData["input1"] !== undefined) {
-		launchVisualization();
-	}
-
-	// Example of requiring two inputs:
-	// if (loadedData["input1"] !== undefined && loadedData["input2"] !== undefined) {
-}
-
-
-function launchVisualization() {
-	changePage("#main");
-	d3.select("#main_tab").style("display", "block");
-
-
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////// This is where you can do all your visualization magic with the data you just loaded /////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Set up the SVG itself
-	var svg = d3.select('svg#vis')
-		.attr("width", layout.svg.width)
-		.attr("height", layout.svg.height)
-
-	////////////   Example static visualizations   ////////////
-	// Background:
-	svg.append("rect")
-		.attr("width",layout.svg.width)
-		.attr("height",layout.svg.height)
-		.attr("fill","#fff4d6");
-
-
-	var width = layout.inner.width;
-	var height = layout.inner.height;
-
-	var inner = svg.append("g")
-		.attr("class","inner")
-		.attr("transform", "translate(" + layout.margin.left + ", " + layout.margin.top + ")");
-	
-
-	// Look at the contents of the data in the console (for development)
-	console.log(loadedData);
+		setExamples(examples);
 
 
 
-	
-
-
-	// Here is an example visualization
-
-	var chromosomeData = loadedData.input1;
-
-
-	// Abstract out the specific column names to make them easier to modify
-	var xVariable = "Base pairs";
-	var yVariable = "Length (mm)";
-	var sizeVariable = "Protein-coding genes";
-	var textVariable = "Chromosome";
-
-
-	// Set up some scales to manage placement and sizing of data points
-	var xScale = d3.scaleLinear()
-		.domain(d3.extent(chromosomeData, function(d) {return d[xVariable]}))
-		.range([0, width]);
-
-	var yScale = d3.scaleLinear()
-		.domain(d3.extent(chromosomeData, function(d) {return d[yVariable]}))
-		.range([height, 0]); // y scale 0 is at the top edge of the SVG, so small values should be at the bottom (height), high values at the top (0)
-
-	var sizeScale = d3.scaleLinear()
-		.domain(d3.extent(chromosomeData, function(d) {return d[sizeVariable]}))
-		.range([5, 25]); // size range: [minimum, maximum]
-
-	// Draw axes
-	inner.append("g")
-		.attr("class", "yAxis")
-		.call(d3.axisLeft(yScale));
-
-
-	inner.append("g")
-		.attr("class", "xAxis")
-		.attr("transform", "translate(0, " + height + ")")
-		.call(d3.axisBottom(xScale));
-
-	// Axis titles
-	inner.append("text")
-		.text(xVariable)
-		.attr("x", width/2)
-		.attr("y", height + layout.margin.bottom/2)
-		.style('text-anchor',"middle")
-		.attr("dominant-baseline","middle");
-
-	inner.append("text")
-		.text(yVariable)
-		.attr("transform", "translate(" + (layout.margin.left * -0.5) + ", " + height / 2 + ") rotate(-90)")
-		.style('text-anchor',"middle")
-		.attr("dominant-baseline","middle");
-
-
-
-	// Draw data points
-
-	var points = inner.selectAll("g.point").data(chromosomeData);
-
-	var newPoints = points.enter().append("g")
-		.attr("class","point");
-
-	newPoints.append("circle");
-	newPoints.append("text");
-
-
-	points.exit().remove();
-
-	// Position each data point
-	points = points.merge(newPoints)
-		.attr("transform", function(d) {return "translate(" + xScale(d[xVariable]) + ", " + yScale(d[yVariable]) + ")"});
-		
-	// Draw text for each data point
-	points.select("text")
-		.style("font-size", function(d) {return sizeScale(d[sizeVariable])})
-		.text(function(d) {return d[textVariable]})
-		.style('text-anchor',"middle")
-		.attr("dominant-baseline","middle")
-		.attr("fill", "white");
-
-	// Draw a circle for each data point
-	points.select("circle")
-		.attr("r", function(d) {return sizeScale(d[sizeVariable])})
-		.attr("fill", "#610070")
-
-
-
-
-
-}
+		// If you need to communicate with the user, you can send them a message like this:
+		showMessage("Welcome to the Visualization Tool Template, see the Tutorial page for information on getting started.", "info");
+		// Use "success", "warning", "danger", or "info" to make the alert box color match the sentiment of your message
 
 
 	</script>

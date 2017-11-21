@@ -9,3 +9,5 @@ It takes care of several requirements shared by most visualization tools on the 
 4. Navigation bar with a page structure that works in this single-page app, with room for tutorials, citation information, and where to find the open-source code
 5. An example D3 visualization to experiment with and replace with your own
 
+
+index.html is the starting point and contains notes throughout for where to modify the template.
