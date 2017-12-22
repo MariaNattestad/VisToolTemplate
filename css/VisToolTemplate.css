@@ -32,3 +32,45 @@ h1, h2 {
 .req {
 	color: #f00;
 }
+.many {
+	color: #00f;
+}
+
+#spinner {
+	position: absolute;
+	height: 100px;
+	width: 100px;
+	top: 50%;
+	left: 50%;
+	margin-left: -50px;
+	margin-top: -50px;
+	z-index: 1000;
+	background-size: 100%;
+	
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button {
+	border: none;
+	color: white;
+	background-color: #008CBA;
+	margin: 4px 2px;
+    cursor: pointer;
+    text-align: center;
+
+}
+
+button:disabled {
+	background-color: #cccccc;
+}
+

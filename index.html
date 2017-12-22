@@ -96,12 +96,15 @@
 
 		// Define the inputs needed for this app
 		var inputSpec = {
-			input: {name: "Chromosome statistics", required: true, callback: readTSVorCSV},
-			someOtherInput: {name: "Second input", required: false, callback: readTSVorCSV}, // try uncommenting this and see another input has been added
+			input: {name: "Chromosome statistics", required: true, callback: getRandomAccess},
+			someOtherInput: {name: "Second input", required: false, callback: readAsString},
+			myManyInputs: {name: "Annotations", required: false, many: true, callback: readTSVorCSV},
 		};
+
+
 		// the keys input and someOtherInput become the names for those parameters you can pass in through the URL (see examples' urlSuffix), and how you refer to each file within the visualization code in app.js
 
-		// Note: readTSVorCSV is a function defined in VisToolTemplate.js, which will be called when a file is chosen. readTSVorCSV will parse the data, read it into memory, and call other functions that launch the visualization in app.js
+		// Note: getRandomAccess, readAsString, and readTSVorCSV are functions defined in VisToolTemplate.js, which will be called when a file is chosen. For instance, readTSVorCSV will parse the data, read it into memory, and call other functions that launch the visualization in app.js. 
 
 		setInputSpec(inputSpec);
 
