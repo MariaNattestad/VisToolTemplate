@@ -96,9 +96,9 @@
 
 		// Define the inputs needed for this app
 		var inputSpec = {
-			input: {name: "Chromosome statistics", required: true, callback: getRandomAccess},
+			input: {name: "Chromosome statistics", required: true, callback: readTSVorCSV},
 			someOtherInput: {name: "Second input", required: false, callback: readAsString},
-			myManyInputs: {name: "Annotations", required: false, many: true, callback: readTSVorCSV},
+			myManyInputs: {name: "Annotations", required: false, many: true, callback: getRandomAccess},
 		};
 
 
